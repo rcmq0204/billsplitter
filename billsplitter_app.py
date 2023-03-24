@@ -25,7 +25,7 @@ else:
     SVC=0
     st.write('The SVC is ',SVC,'%')
 
-print('hello world')
+
 
 
 

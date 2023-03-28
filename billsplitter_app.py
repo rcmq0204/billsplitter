@@ -108,6 +108,7 @@ st.write('Ensure that all names are added above')
 
 st.header('Prices and Splits')
 price=st.number_input('Enter price of food',format='%.2f')
+st.write('The price to be split is $',price)
 st.button('Enter Price',key='price_add',on_click=price_adder,args=(price,))
 people=st.multiselect('Select who will split this price',options=st.session_state.names,default=st.session_state.names)
 split_choices=st.radio('Even or uneven split',options=['Even','Uneven'],key='choice_split')
@@ -117,7 +118,6 @@ if split_choices=='Even':
 else:
     st.write('Input percentage split')
     uneven_sliders(people,st.session_state.i)
-    st.write('The price to be split is $',price)
     st.write('Check the percentages, then click the \'Split unevenly\' button below')
     st.button('Split unevenly',key='uneven_button_splitter',on_click=uneven_split,args=(people,st.session_state.pct_lst,price))
 

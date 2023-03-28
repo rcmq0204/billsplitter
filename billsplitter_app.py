@@ -53,16 +53,17 @@ def pct_lst_appender(pct):
     st.session_state.pct_lst.append(pct)
 
 
+
 def uneven_sliders(people,i):
     st.session_state.pct_lst=[]
     for name in people:
-        pct=st.slider(name,min_value=0.0,max_value=100.0,step=0.1,format='%.1f',key='pct_splitter_'+str(i))
+        pct=st.number_input(name,min_value=0.0,max_value=100.0,step=0.1,format='%.1f',key='pct_splitter_'+str(i),label_visibility='visible')
         i+=1
         pct_lst_appender(pct)
         
 
 def uneven_split(people,pct_lst,price):
-    if sum(pct_lst)!=100:
+    if round(sum(pct_lst),1)!=100.0:
         st.warning('Please make sure the sum of the percentages is equal to 100')
     else:
         pct_price_lst=[]
@@ -114,8 +115,9 @@ if split_choices=='Even':
     st.write('Press the \'Split evenly\' button')
     st.button('Split evenly',key='even_split',on_click=even_splitter,args=(people,price))
 else:
-    st.write('Slide according to the percentage of splitting')
+    st.write('Input percentage split')
     uneven_sliders(people,st.session_state.i)
+    st.write('The price to be split is $',price)
     st.write('Check the percentages, then click the \'Split unevenly\' button below')
     st.button('Split unevenly',key='uneven_button_splitter',on_click=uneven_split,args=(people,st.session_state.pct_lst,price))
 

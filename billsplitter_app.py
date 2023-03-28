@@ -10,7 +10,8 @@ import streamlit as st
 
 st.title('Bill Splitting App')
 st.markdown('This app helps to calculate the amount each person has to pay in the bill :)')
-st.write('Click the following checkboxes if there is GST and/or SVC:')
+st.header('GST and/or SVC')
+st.write('Click the following checkboxes if there is GST and/or SVC')
 if st.checkbox('GST'):
     GST=st.number_input(f'Enter the GST in % here (if GST is 8%, type 8)')
     st.write('The GST is ',GST,'%')
@@ -94,6 +95,7 @@ if 'i' not in st.session_state:
 if 'pct_lst' not in st.session_state:
     st.session_state.pct_lst=[]
 
+st.header('Names')
 name=st.text_input('Enter name here (one at a time)',key='new_name')
 st.button('Add name',key='button_add_name',on_click=name_adder,args=(name,))
 
@@ -103,6 +105,7 @@ st.button('Delete',key='name_del',on_click=name_deleter,args=(name_del,))
 st.write(st.session_state.names)
 st.write('Ensure that all names are added above')
 
+st.header('Prices and Splits')
 price=st.number_input('Enter price of food',format='%.2f')
 st.button('Enter Price',key='price_add',on_click=price_adder,args=(price,))
 people=st.multiselect('Select who will split this price',options=st.session_state.names,default=st.session_state.names)
@@ -118,7 +121,8 @@ else:
 
     
 #once all the prices have been split, need to add gst and svc
+st.header('Final amounts')
 st.write('Click the button below to include the GST and SVC')
-st.button('Compute amounts with GST and SVC',key='gst_svc_adder',on_click=gst_svc_adder,args=(GST,SVC))
+st.button('Compute final amounts',key='gst_svc_adder',on_click=gst_svc_adder,args=(GST,SVC))
 
 st.write(st.session_state.people_price)

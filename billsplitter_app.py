@@ -7,6 +7,7 @@ Created on Tue Mar 21 21:21:41 2023
 """
 
 import streamlit as st
+import pandas as pd
 
 st.title('Bill Splitting App')
 st.markdown('This app helps to calculate the amount each person has to pay in the bill :)')
@@ -32,10 +33,11 @@ def name_adder(name:str):
     else:
         st.warning(f'This name has already been addded')
     if name not in st.session_state.people_price:
-        st.session_state.people_price[name]=0
+        st.session_state.people_price[name]=[]
 
 def name_deleter(name:str):
     st.session_state.names.remove(name)
+    del st.session_state.people_price[name]
 
 def price_adder(price:float):
     if price<0:
@@ -43,10 +45,19 @@ def price_adder(price:float):
     else:
         st.session_state.prices.append(price)
 
-def even_splitter(people:list,price:float):
+def even_splitter(people,price,names):
     ppp=price/len(people) #ppp=price per person
-    for i in people:
-        st.session_state.people_price[i]+=ppp
+    if len(st.session_state.people_price['Food Item'])==0:
+        st.session_state.people_price['Food Item'].append(1)
+    else:
+        st.session_state.people_price['Food Item'].append(st.session_state.people_price['Food Item'][-1]+1)
+    st.session_state.people_price['Total'].append(round(price,2))
+    for i in names:
+        if i not in people:
+            st.session_state.people_price[i].append(round(0,2))
+        else:
+            st.session_state.people_price[i].append(round(ppp,2))
+
 
 
 def pct_lst_appender(pct):
@@ -62,21 +73,31 @@ def uneven_sliders(people,i):
         pct_lst_appender(pct)
         
 
-def uneven_split(people,pct_lst,price):
+def uneven_split(people,pct_lst,price,names):
     if round(sum(pct_lst),1)!=100.0:
         st.warning('Please make sure the sum of the percentages is equal to 100')
     else:
-        pct_price_lst=[]
-        for pct in pct_lst:
-            pct_price_lst.append(pct/100*price)
-        for i in people:
-            idx=people.index(i)
-            st.session_state.people_price[i]+=pct_price_lst[idx]
+        if len(st.session_state.people_price['Food Item'])==0:
+            st.session_state.people_price['Food Item'].append(1)
+        else:
+            st.session_state.people_price['Food Item'].append(st.session_state.people_price['Food Item'][-1]+1)
+        st.session_state.people_price['Total'].append(round(price,2))
+        for i in names:
+            if i not in people:
+                st.session_state.people_price[i].append(round(0,2))
+            else:
+                pct_price_lst=[]
+                for pct in pct_lst:
+                    pct_price_lst.append(pct/100*price)
+                    idx=people.index(i)
+                st.session_state.people_price[i].append(round(pct_price_lst[idx],2))
         st.session_state.pct_lst=[]
   
-def gst_svc_adder(GST:float,SVC:float):
-    for key in st.session_state.people_price:
-        st.session_state.people_price[key]=round(st.session_state.people_price[key]*(1+SVC/100)*(1+GST/100),2)
+def gst_svc_adder(GST,SVC,names):
+    st.session_state.people_price['Food Item'].extend(['Total w/o GST/SVC','Total with GST/SVC'])
+    st.session_state.people_price['Total'].extend([round(sum(st.session_state.people_price['Total']),2),round(sum(st.session_state.people_price['Total'])*(1+SVC/100)*(1+GST/100),2)])
+    for i in names:
+        st.session_state.people_price[i].extend([round(sum(st.session_state.people_price[i]),2),round(sum(st.session_state.people_price[i])*(1+SVC/100)*(1+GST/100),2)])
 
 if 'names' not in st.session_state:
     st.session_state.names=[] #list of names
@@ -85,7 +106,7 @@ if 'prices' not in st.session_state:
     st.session_state.prices=[] #list of prices
 
 if 'people_price' not in st.session_state:
-    st.session_state.people_price={}
+    st.session_state.people_price={'Food Item':[],'Total':[]}
 
 if 'pct_split' not in st.session_state:
     st.session_state.pct_split=[]
@@ -102,29 +123,31 @@ st.button('Add name',key='button_add_name',on_click=name_adder,args=(name,))
 
 name_del=st.selectbox('If you wish to delete a name, select the name then press delete',st.session_state.names)
 st.button('Delete',key='name_del',on_click=name_deleter,args=(name_del,))
-    
-st.write(st.session_state.names)
+
+name_df=pd.DataFrame(st.session_state.names,columns=['Names'])
+st.dataframe(name_df)
 st.write('Ensure that all names are added above')
 
 st.header('Prices and Splits')
 price=st.number_input('Enter price of food',format='%.2f')
-st.write('The price to be split is $',price)
+st.write('The price to be split is $',round(price,2))
 st.button('Enter Price',key='price_add',on_click=price_adder,args=(price,))
 people=st.multiselect('Select who will split this price',options=st.session_state.names,default=st.session_state.names)
 split_choices=st.radio('Even or uneven split',options=['Even','Uneven'],key='choice_split')
 if split_choices=='Even':
     st.write('Press the \'Split evenly\' button')
-    st.button('Split evenly',key='even_split',on_click=even_splitter,args=(people,price))
+    st.button('Split evenly',key='even_split',on_click=even_splitter,args=(people,price,st.session_state.names))
 else:
     st.write('Input percentage split')
     uneven_sliders(people,st.session_state.i)
     st.write('Check the percentages, then click the \'Split unevenly\' button below')
-    st.button('Split unevenly',key='uneven_button_splitter',on_click=uneven_split,args=(people,st.session_state.pct_lst,price))
+    st.button('Split unevenly',key='uneven_button_splitter',on_click=uneven_split,args=(people,st.session_state.pct_lst,price,st.session_state.names))
 
     
 #once all the prices have been split, need to add gst and svc
 st.header('Final amounts')
-st.write('Click the button below to include the GST and SVC')
-st.button('Compute final amounts',key='gst_svc_adder',on_click=gst_svc_adder,args=(GST,SVC))
+st.write('Click the button below calculate total')
+st.button('Compute final amounts',key='gst_svc_adder',on_click=gst_svc_adder,args=(GST,SVC,st.session_state.names))
 
-st.write(st.session_state.people_price)
+people_price_df=pd.DataFrame(st.session_state.people_price)
+st.dataframe(people_price_df)

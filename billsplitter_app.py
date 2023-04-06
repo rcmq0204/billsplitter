@@ -48,9 +48,9 @@ def price_adder(price:float):
 def even_splitter(people,price,names):
     ppp=price/len(people) #ppp=price per person
     if len(st.session_state.people_price['Food Item'])==0:
-        st.session_state.people_price['Food Item'].append(1)
+        st.session_state.people_price['Food Item'].append(str(1))
     else:
-        st.session_state.people_price['Food Item'].append(st.session_state.people_price['Food Item'][-1]+1)
+        st.session_state.people_price['Food Item'].append(str(int(st.session_state.people_price['Food Item'][-1])+1))
     st.session_state.people_price['Total'].append(round(price,2))
     for i in names:
         if i not in people:
@@ -78,9 +78,9 @@ def uneven_split(people,pct_lst,price,names):
         st.warning('Please make sure the sum of the percentages is equal to 100')
     else:
         if len(st.session_state.people_price['Food Item'])==0:
-            st.session_state.people_price['Food Item'].append(1)
+            st.session_state.people_price['Food Item'].append(str(1))
         else:
-            st.session_state.people_price['Food Item'].append(st.session_state.people_price['Food Item'][-1]+1)
+            st.session_state.people_price['Food Item'].append(str(int(st.session_state.people_price['Food Item'][-1])+1))
         st.session_state.people_price['Total'].append(round(price,2))
         for i in names:
             if i not in people:
@@ -98,6 +98,10 @@ def gst_svc_adder(GST,SVC,names):
     st.session_state.people_price['Total'].extend([round(sum(st.session_state.people_price['Total']),2),round(sum(st.session_state.people_price['Total'])*(1+SVC/100)*(1+GST/100),2)])
     for i in names:
         st.session_state.people_price[i].extend([round(sum(st.session_state.people_price[i]),2),round(sum(st.session_state.people_price[i])*(1+SVC/100)*(1+GST/100),2)])
+
+def undo_last_step(people_price_dict):
+    for key in people_price_dict:
+        del people_price_dict[key][-1]
 
 if 'names' not in st.session_state:
     st.session_state.names=[] #list of names
@@ -143,7 +147,9 @@ else:
     st.write('Check the percentages, then click the \'Split unevenly\' button below')
     st.button('Split unevenly',key='uneven_button_splitter',on_click=uneven_split,args=(people,st.session_state.pct_lst,price,st.session_state.names))
 
-    
+st.write('If you made a mistake, click the \'Undo\' button, note this only allows you to undo the latest step')
+st.button('Undo',key='Undo_button',on_click=undo_last_step,args=(st.session_state.people_price,))
+
 #once all the prices have been split, need to add gst and svc
 st.header('Final amounts')
 st.write('Click the button below calculate total')

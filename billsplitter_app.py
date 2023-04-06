@@ -10,7 +10,7 @@ import streamlit as st
 import pandas as pd
 
 st.title('Bill Splitting App')
-st.markdown('This app helps to calculate the amount each person has to pay in the bill :moneybag:')
+st.markdown('This app helps to calculate the amount each person has to pay in the bill :moneybag: :money_with_wings:')
 st.header('GST and/or SVC')
 st.write('Click the following checkboxes if there is GST and/or SVC')
 if st.checkbox('GST'):
@@ -98,8 +98,6 @@ def gst_svc_adder(GST,SVC,names):
     st.session_state.people_price['Total'].extend([round(sum(st.session_state.people_price['Total']),2),round(sum(st.session_state.people_price['Total'])*(1+SVC/100)*(1+GST/100),2)])
     for i in names:
         st.session_state.people_price[i].extend([round(sum(st.session_state.people_price[i]),2),round(sum(st.session_state.people_price[i])*(1+SVC/100)*(1+GST/100),2)])
-    st.write('The \'++\' indicates the price with GST and SVC added')
-    st.write('Your bill has been split woohoo! :money_with_wings:')
 
 def undo_last_step(people_price_dict):
     for key in people_price_dict:
@@ -154,8 +152,10 @@ st.button('Undo',key='Undo_button',on_click=undo_last_step,args=(st.session_stat
 
 #once all the prices have been split, need to add gst and svc
 st.header('Final amounts')
-st.write('Click the button below calculate total')
+st.write('Click the \'Compute final amounts\' button to calculate total')
+st.write('After clicking the button, note that the \'++\' indicates the price with GST and SVC added')
 st.button('Compute final amounts',key='gst_svc_adder',on_click=gst_svc_adder,args=(GST,SVC,st.session_state.names))
+
 
 people_price_df=pd.DataFrame(st.session_state.people_price)
 st.dataframe(people_price_df,use_container_width=True)

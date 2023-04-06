@@ -156,4 +156,4 @@ st.write('Click the button below calculate total')
 st.button('Compute final amounts',key='gst_svc_adder',on_click=gst_svc_adder,args=(GST,SVC,st.session_state.names))
 
 people_price_df=pd.DataFrame(st.session_state.people_price)
-st.dataframe(people_price_df)
+st.dataframe(people_price_df,use_container_width=True)

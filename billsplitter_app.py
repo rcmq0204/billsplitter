@@ -10,7 +10,7 @@ import streamlit as st
 import pandas as pd
 
 st.title('Bill Splitting App')
-st.markdown('This app helps to calculate the amount each person has to pay in the bill :)')
+st.markdown('This app helps to calculate the amount each person has to pay in the bill :moneybag:')
 st.header('GST and/or SVC')
 st.write('Click the following checkboxes if there is GST and/or SVC')
 if st.checkbox('GST'):
@@ -94,7 +94,7 @@ def uneven_split(people,pct_lst,price,names):
         st.session_state.pct_lst=[]
   
 def gst_svc_adder(GST,SVC,names):
-    st.session_state.people_price['Food Item'].extend(['Total w/o GST/SVC','Total with GST/SVC'])
+    st.session_state.people_price['Food Item'].extend(['Total','Total++'])
     st.session_state.people_price['Total'].extend([round(sum(st.session_state.people_price['Total']),2),round(sum(st.session_state.people_price['Total'])*(1+SVC/100)*(1+GST/100),2)])
     for i in names:
         st.session_state.people_price[i].extend([round(sum(st.session_state.people_price[i]),2),round(sum(st.session_state.people_price[i])*(1+SVC/100)*(1+GST/100),2)])
@@ -157,3 +157,5 @@ st.button('Compute final amounts',key='gst_svc_adder',on_click=gst_svc_adder,arg
 
 people_price_df=pd.DataFrame(st.session_state.people_price)
 st.dataframe(people_price_df,use_container_width=True)
+st.write('The \'++\' indicates the price with GST and SVC added')
+st.write('Your bill has been split woohoo! :money_with_wings:')

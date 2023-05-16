@@ -44,6 +44,7 @@ def price_adder(price:float):
         st.warning(f'Please enter a proper price')
     else:
         st.session_state.prices.append(price)
+        st.session_state.price_display.append(price)
 
 def even_splitter(people,price,names):
     ppp=price/len(people) #ppp=price per person
@@ -58,12 +59,8 @@ def even_splitter(people,price,names):
         else:
             st.session_state.people_price[i].append(round(ppp,2))
 
-
-
 def pct_lst_appender(pct):
     st.session_state.pct_lst.append(pct)
-
-
 
 def uneven_sliders(people,i):
     st.session_state.pct_lst=[]
@@ -109,6 +106,9 @@ if 'names' not in st.session_state:
 if 'prices' not in st.session_state:
     st.session_state.prices=[] #list of prices
 
+if 'price_display' not in st.session_state:
+    st.session_state.price_display=[0]
+
 if 'people_price' not in st.session_state:
     st.session_state.people_price={'Food Item':[],'Total':[]}
 
@@ -134,8 +134,8 @@ st.write('Ensure that all names are added above')
 
 st.header('Prices and Splits')
 price=st.number_input('Enter price of food',format='%.2f')
-st.write('The price to be split is $',round(price,2))
 st.button('Enter Price',key='price_add',on_click=price_adder,args=(price,))
+st.write('The price to be split is $',round(st.session_state.price_display[-1],2))
 people=st.multiselect('Select who will split this price',options=st.session_state.names,default=st.session_state.names)
 split_choices=st.radio('Even or uneven split',options=['Even','Uneven'],key='choice_split')
 if split_choices=='Even':

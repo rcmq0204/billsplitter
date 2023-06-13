@@ -14,14 +14,14 @@ st.markdown('This app helps to calculate the amount each person has to pay in th
 st.header('GST and/or SVC')
 st.write('Click the following checkboxes if there is GST and/or SVC')
 if st.checkbox('GST'):
-    GST=st.number_input(f'Enter the GST in % here (if GST is 8%, type 8)')
+    GST=st.number_input(f'Enter the GST in % here (Default is 8.00%)',value=8.0)
     st.write('The GST is ',GST,'%')
 else:
     GST=0
     st.write('The GST is ',GST,'%')
 
 if st.checkbox('SVC'):
-    SVC=st.number_input(f'Enter the SVC in % here (if SVC is 10%, type 10)')
+    SVC=st.number_input(f'Enter the SVC in % here (Default is 10.00)',value=10.0)
     st.write('The SVC is ',SVC,'%')
 else:
     SVC=0

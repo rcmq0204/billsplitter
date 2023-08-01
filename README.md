@@ -4,6 +4,6 @@ This app was created to solve a problem me and my friends commonly face when spl
 
 The ipynb file was what was first used, but it meant I had to be at a laptop to use it. Hence, I created the webapp using streamlit in order to be able to do the splitting without my laptop. Click [link](https://billsplitter.streamlit.app/) to try :).
 
-This was what I could do so far on my own, but I still feel there are more ways to improve it but I'm proud of what I achieved here and will hopefully improve it in the future
+This was the first web app I created using streamlit during my undergrad days just for fun. :)
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://<your-custom-subdomain>.streamlit.app)
